@@ -8,10 +8,12 @@ import {
 } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
 import React, { useMemo } from "react";
-import "./globals.css";
-import '@solana/wallet-adapter-react-ui/styles.css';
-import Header from "@/components/Header";
 import { RecoilRoot } from "recoil";
+import "./globals.css";
+import Header from "@/components/Header";
+import SideBar from "@/components/SideBar";
+import Footer from "@/components/Footer";
+import { CustomToast } from "@/components/CustomToast";
 
 const space_mono = Space_Mono({
   weight: ["400", "700"],
@@ -42,9 +44,14 @@ export default function RootLayout({
           <ConnectionProvider endpoint={endpoint}>
             <WalletProvider wallets={wallets} autoConnect>
               <WalletModalProvider>
-                <body className={space_mono.className}>
-                  <Header />
-                  {children}
+                <body className={`${space_mono.className} min-h-screen flex transition-all bg-stone-200 dark:bg-stone-900`}>
+                  <SideBar />
+                  <div className="flex flex-1 flex-grow flex-col justify-between">
+                    <Header />
+                    {children}
+                    <CustomToast />
+                    <Footer />
+                  </div>
                 </body>
               </WalletModalProvider>
             </WalletProvider>

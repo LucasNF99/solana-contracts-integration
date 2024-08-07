@@ -30,7 +30,7 @@ const DarkModeBtn = () => {
 
         <button onClick={() => {
           setTheme("light");
-        }}>sun</button>
+        }}>sun&nbsp;</button>
 
       ) : (
         <button onClick={() => {

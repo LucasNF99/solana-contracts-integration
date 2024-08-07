@@ -1,0 +1,17 @@
+.button {
+  @apply 
+  px-2 
+  py-3 
+  uppercase 
+  border
+  text-center
+  transition-all
+  bg-stone-200
+  dark:bg-stone-900
+  border-stone-900 
+  dark:border-stone-100
+  hover:bg-stone-900
+  hover:text-stone-200
+  hover:dark:bg-stone-200
+  hover:dark:text-stone-900;
+}
