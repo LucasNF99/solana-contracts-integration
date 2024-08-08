@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { useTheme } from "next-themes";
 import { useSetRecoilState } from "recoil";
 import { themeAtom } from "@/presentation/atom/themeAtom";
+import { MoonIcon, SunIcon } from "@heroicons/react/24/outline";
 
 const DarkModeBtn = () => {
   const [mounted, setMounted] = useState(false);
@@ -30,12 +31,12 @@ const DarkModeBtn = () => {
 
         <button onClick={() => {
           setTheme("light");
-        }}>sun&nbsp;</button>
+        }}><SunIcon className="w-5 h-5" /></button>
 
       ) : (
         <button onClick={() => {
           setTheme("dark");
-        }}>moon</button>
+        }}><MoonIcon className="w-5 h-5" /></button>
       )}
     </span>
   );

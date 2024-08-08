@@ -30,5 +30,5 @@ export default function CounterState() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [program]);
 
-  return <p className="text-lg my-6">Count: {counterData?.count ? counterData?.count?.toString() : '00'}</p>;
+  return <p className="text-lg mb-6"><strong>Count:</strong> {counterData?.count ? counterData?.count?.toString() : '00'}</p>;
 }

@@ -10,7 +10,8 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        offWhite: '#F9F8FC'
+        offWhite: '#F9F8FC',
+        current: 'currentColor',
       },
       backgroundImage: {
       },

@@ -1,7 +1,9 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
-    <header className="container sticky flex justify-end my-4 px-4">
-      <p>By: Facho</p>
-    </header>
+    <footer className="container sticky flex justify-end my-4 px-4">
+      <p>By: <Link className="underline" target="_blank" href="https://x.com/facholks">Facho</Link></p>
+    </footer>
   )
 }
