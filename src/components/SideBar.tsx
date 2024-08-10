@@ -1,4 +1,4 @@
-import { HomeIcon, InformationCircleIcon, VariableIcon, WalletIcon } from "@heroicons/react/24/outline";
+import { HomeIcon, InformationCircleIcon, PaperAirplaneIcon, VariableIcon, WalletIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FaucetIcon from '@/../public/assets/icons/faucet.svg';
@@ -14,6 +14,11 @@ export default function SideBar() {
       icon: <FaucetIcon className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900  scale-x-[-1]" />,
       text: 'Faucet',
       link: '/faucet'
+    },
+    {
+      icon: <PaperAirplaneIcon className="w-5 h-5 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900" />,
+      text: 'Send Sol',
+      link: '/send-sol'
     },
     {
       icon: <VariableIcon className="w-5 h-5 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900" />,
