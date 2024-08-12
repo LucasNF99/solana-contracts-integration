@@ -2,6 +2,7 @@ import { HomeIcon, InformationCircleIcon, PaperAirplaneIcon, VariableIcon, Walle
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import FaucetIcon from '@/../public/assets/icons/faucet.svg';
+import ThoughtIcon from '@/../public/assets/icons/thought.svg';
 export default function SideBar() {
   const pathname = usePathname()
   const linksList = [
@@ -11,14 +12,19 @@ export default function SideBar() {
       link: '/'
     },
     {
-      icon: <FaucetIcon className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900  scale-x-[-1]" />,
-      text: 'Faucet',
-      link: '/faucet'
-    },
-    {
       icon: <PaperAirplaneIcon className="w-5 h-5 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900" />,
       text: 'Send Sol',
       link: '/send-sol'
+    },
+    {
+      icon: <ThoughtIcon className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900 " />,
+      text: 'Save thoughts',
+      link: '/save-thoughts'
+    },
+    {
+      icon: <FaucetIcon className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900  scale-x-[-1]" />,
+      text: 'Faucet',
+      link: '/faucet'
     },
     {
       icon: <VariableIcon className="w-5 h-5 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900" />,

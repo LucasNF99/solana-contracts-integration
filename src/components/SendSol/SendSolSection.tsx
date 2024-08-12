@@ -72,11 +72,11 @@ export function SendSolSection() {
   return (
     <section>
       <form className='flex flex-col gap-4 items-center justify-center' onSubmit={(evt) => handleTransaction(evt)}>
-        <label htmlFor="receiver" className='flex flex-col'>
+        <label htmlFor="receiver" className='flex flex-col gap-2'>
           <p>Address of receiver</p>
           <input
             required
-            className='bg-transparent px-2 py-3 border border-indigo-200 hover:border-indigo-300'
+            className='bg-transparent w-96 px-2 py-3 border border-indigo-200 hover:border-indigo-300'
             type="text"
             name="receiver"
             id="receiver"
@@ -86,11 +86,11 @@ export function SendSolSection() {
           />
         </label>
 
-        <label htmlFor="amount" className='flex flex-col'>
+        <label htmlFor="amount" className='flex flex-col gap-2'>
           <p>Amount</p>
           <input
             required
-            className='bg-transparent px-2 py-3 border border-indigo-200 hover:border-indigo-300'
+            className='bg-transparent w-96 px-2 py-3 border border-indigo-200 hover:border-indigo-300'
             type="number"
             name="amount"
             min={0}
