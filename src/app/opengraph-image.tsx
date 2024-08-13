@@ -12,7 +12,7 @@ export default async function Image() {
     (
       <div
         style={{
-          fontSize: 30,
+          fontSize: 35,
           background: 'white',
           width: '100%',
           height: '100%',
@@ -31,7 +31,7 @@ export default async function Image() {
             position: 'absolute',
             bottom: 20,
             right: 20,
-            fontSize: 20,
+            fontSize: 30,
           }}
         >
           By: Facho
