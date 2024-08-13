@@ -24,7 +24,7 @@ export class StudentIntroCoordinator {
         ]
       }
     );
-
+    // @ts-ignore
     accounts.sort((a, b) => {
       const lengthA = a.account.data.readUInt32LE(0);
       const lengthB = b.account.data.readUInt32LE(0);

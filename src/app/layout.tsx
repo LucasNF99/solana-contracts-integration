@@ -20,8 +20,6 @@ const space_mono = Space_Mono({
   subsets: ["latin"]
 });
 
-
-
 export default function RootLayout({
   children,
 }: Readonly<{
