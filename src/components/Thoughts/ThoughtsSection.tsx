@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { StudentIntro } from '../../models/serialize/StudentIntro';
 import { StudentIntroCoordinator } from '../../scripts/serialize/StudentIntroCoordinator'
 import { useEffect, useState } from 'react';
+import { MagnifyingGlassIcon } from '@heroicons/react/24/outline';
 
 
 export default function ThoughtsSection() {
@@ -138,19 +139,31 @@ export default function ThoughtsSection() {
             Read some thoughts:
           </h2>
           <div>
-            <label htmlFor="Search" className='flex gap-2 items-center'>
-              <input
-                required
-                className='bg-transparent px-2 py-3 border border-indigo-200 hover:border-indigo-300'
-                type="search"
-                name="Search"
-                id="Search"
-                placeholder='Search'
-                onChange={(evt) => setSearchInput(evt.target.value)}
-                value={searchInput}
-              />
-              <button onClick={() => setSearch(searchInput)} className='button' type="button">Search</button>
+            <label htmlFor="Search" className='flex items-center gap-2'>
+              <div className='relative w-full'>
+                <MagnifyingGlassIcon className='absolute left-2 top-1/2 transform -translate-y-1/2' width={20} />
+                <input
+                  required
+                  className='bg-transparent pl-10 pr-2 py-3 border border-indigo-200 hover:border-indigo-300 w-full'
+                  type="search"
+                  name="Search"
+                  id="Search"
+                  placeholder='Search'
+                  onChange={(evt) => setSearchInput(evt.target.value)}
+                  value={searchInput}
+                />
+              </div>
+              <button
+                onClick={() => {
+                  setSearch(searchInput);
+                  setPage(1);
+                }}
+                className='button'
+                type="button">
+                Search
+              </button>
             </label>
+
           </div>
         </div>
         <div>
@@ -168,6 +181,7 @@ export default function ThoughtsSection() {
                   <strong>Thought:</strong> <span>{studentInto.message}</span>
                 </p>
               </li>
+
             ))}
           </ul>
           <div className='flex justify-between mt-4'>
@@ -176,14 +190,14 @@ export default function ThoughtsSection() {
             {StudentIntroCoordinator.accounts.length > page * 5 &&
               <button
                 onClick={() => setPage(page + 1)}
-                className='button'
-                disabled={studentIntros.length === 0}
+                className='button ml-auto'
+
                 type="button">
                 Next
               </button>}
           </div>
         </div>
-      </section>
+      </section >
     </>
   );
 }
