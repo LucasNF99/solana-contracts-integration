@@ -14,7 +14,7 @@ export const linksList = [
   },
   {
     icon: <ThoughtIcon width={24} className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900 " />,
-    text: 'Save thoughts',
+    text: 'Save thoughts on-chain',
     link: '/save-thoughts'
   },
   {

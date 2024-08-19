@@ -13,8 +13,6 @@ const config: Config = {
         offWhite: '#F9F8FC',
         current: 'currentColor',
       },
-      backgroundImage: {
-      },
     },
   },
   plugins: [],

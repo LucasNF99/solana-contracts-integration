@@ -1,4 +1,4 @@
-import { HomeIcon, InformationCircleIcon, PaperAirplaneIcon, VariableIcon, WalletIcon } from "@heroicons/react/24/outline";
+import { HomeIcon, InformationCircleIcon, PaperAirplaneIcon, PhotoIcon, VariableIcon, WalletIcon } from "@heroicons/react/24/outline";
 import FaucetIcon from '@/../public/assets/icons/faucet.svg';
 import ThoughtIcon from '@/../public/assets/icons/thought.svg';
 import Link from "next/link";
@@ -38,6 +38,11 @@ export default function SideBar() {
       text: 'Wallet Status',
       link: '/wallet-status'
     },
+    // {
+    //   icon: <PhotoIcon width={24} className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900" />,
+    //   text: 'Mint NFT',
+    //   link: '/minter'
+    // },
     {
       icon: <InformationCircleIcon width={24} className="w-6 h-6 text-stone-900 dark:text-stone-100 group-hover:text-stone-200 group-hover:dark:text-stone-900" />,
       text: 'About',
