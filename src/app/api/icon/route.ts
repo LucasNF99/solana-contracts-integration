@@ -29,17 +29,17 @@ export async function GET(req: Request) {
   context.fillStyle = '#fff';
   context.textAlign = 'center';
 
-  context.font = 'bold 40px Oswald';
+  context.font = 'bold 40px Arial';
   context.fillText('SOLCLAIMR', width / 2, 70);
 
-  context.font = '20px Montserrat';
+  context.font = '20px Arial';
   context.fillText('Account to Close:', width / 2, 140);
-  context.font = 'bold 55px Montserrat';
+  context.font = 'bold 55px Arial';
   context.fillText(accountsToClose.toString(), width / 2, 190);
 
-  context.font = '20px Montserrat';
+  context.font = '20px Arial';
   context.fillText('Total SOL Claim:', width / 2, 270);
-  context.font = 'bold 50px Montserrat';
+  context.font = 'bold 50px Arial';
   context.fillText(totalSolClaim.toFixed(5), width / 2, 320);
 
   const buffer = canvas.toBuffer('image/png');
