@@ -17,7 +17,19 @@ export async function GET(req: Request) {
       actions: [
         {
           href: req.url,
-          label: 'Check open accounts'
+          label: 'Check open accounts',
+          parameters: [
+            {
+              name: 'check',
+              type: 'checkbox',
+              required: true,
+              options: [{
+                label: 'check',
+                value: 'check',
+                selected: true
+              }]
+            }
+          ]
         },
       ]
     },
@@ -30,6 +42,7 @@ export async function POST(request: Request) {
   const currentUrl = new URL(request.url);
   const baseUrl = `${currentUrl.origin}`;
   const requestBody: ActionPostRequest = await request.json();
+  console.log(requestBody)
   const userPublicKey = requestBody.account;
   const user = new PublicKey(userPublicKey);
   const connection = new Connection(clusterApiUrl('devnet'));
@@ -77,7 +90,7 @@ export async function POST(request: Request) {
       verifySignatures: false
     }).toString('base64');
     console.log({firstCall})
-    if (firstCall > 0) {
+    if (!requestBody.data) {
       const tx = new Transaction();
       const ixs = emptyTAs.map(pks => createCloseAccountInstruction(pks, user, user, undefined, TOKEN_PROGRAM_ID));
       tx.add(...ixs);
@@ -95,7 +108,6 @@ export async function POST(request: Request) {
         transaction: serializedTX,
         message: "Closing " + emptyTAs.length + " token accounts!",
       };
-      firstCall--;
       return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
     }
 
