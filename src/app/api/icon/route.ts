@@ -19,9 +19,11 @@ export async function GET(req: Request) {
   }
   const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Montserrat-Regular.ttf');
   registerFont(fontPath, { family: 'Montserrat' });
+  const fontPathB = path.join(process.cwd(), 'public', 'fonts', 'Montserrat-bold.ttf');
+  registerFont(fontPathB, { family: 'MontserratB' });
   const fontPathT = path.join(process.cwd(), 'public', 'fonts', 'Oswald-Bold.ttf');
   registerFont(fontPathT, { family: 'Oswald' });
-  
+
   const width = 400;
   const height = 400;
   const canvas = createCanvas(width, height);
@@ -39,12 +41,12 @@ export async function GET(req: Request) {
 
   context.font = '20px Montserrat';
   context.fillText('Account to Close:', width / 2, 140);
-  context.font = 'bold 55px Montserrat';
+  context.font = 'bold 55px MontserratB';
   context.fillText(accountsToClose.toString(), width / 2, 190);
 
   context.font = '20px Montserrat';
   context.fillText('Total SOL Claim:', width / 2, 270);
-  context.font = 'bold 50px Montserrat';
+  context.font = 'bold 50px MontserratB';
   context.fillText(totalSolClaim.toFixed(5), width / 2, 320);
 
   const buffer = canvas.toBuffer('image/png');
