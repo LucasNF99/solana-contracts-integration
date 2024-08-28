@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
-import { createCanvas } from 'canvas';
+import { createCanvas, registerFont } from 'canvas';
+import path from 'path';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -16,7 +17,11 @@ export async function GET(req: Request) {
   if (isNaN(accountsToClose) || isNaN(totalSolClaim)) {
     return NextResponse.json({ error: 'Invalid parameters' }, { status: 400 });
   }
-
+  const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Montserrat-Regular.ttf');
+  registerFont(fontPath, { family: 'Montserrat' });
+  const fontPathT = path.join(process.cwd(), 'public', 'fonts', 'Oswald-Bold.ttf');
+  registerFont(fontPathT, { family: 'Oswald' });
+  
   const width = 400;
   const height = 400;
   const canvas = createCanvas(width, height);
@@ -29,17 +34,17 @@ export async function GET(req: Request) {
   context.fillStyle = '#fff';
   context.textAlign = 'center';
 
-  context.font = 'bold 40px Arial';
+  context.font = 'bold 40px Oswald';
   context.fillText('SOLCLAIMR', width / 2, 70);
 
-  context.font = '20px Arial';
+  context.font = '20px Montserrat';
   context.fillText('Account to Close:', width / 2, 140);
-  context.font = 'bold 55px Arial';
+  context.font = 'bold 55px Montserrat';
   context.fillText(accountsToClose.toString(), width / 2, 190);
 
-  context.font = '20px Arial';
+  context.font = '20px Montserrat';
   context.fillText('Total SOL Claim:', width / 2, 270);
-  context.font = 'bold 50px Arial';
+  context.font = 'bold 50px Montserrat';
   context.fillText(totalSolClaim.toFixed(5), width / 2, 320);
 
   const buffer = canvas.toBuffer('image/png');
