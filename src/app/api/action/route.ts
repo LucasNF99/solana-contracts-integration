@@ -27,114 +27,103 @@ export async function GET(req: Request) {
 }
 
 export async function POST(request: Request) {
-  try {
-    const currentUrl = new URL(request.url);
-    const baseUrl = `${currentUrl.origin}`;
-    const requestBody: ActionPostRequest = await request.json();
-    const userPublicKey = requestBody.account;
+  const currentUrl = new URL(request.url);
+  const baseUrl = `${currentUrl.origin}`;
+  const requestBody: ActionPostRequest = await request.json();
+  const userPublicKey = requestBody.account;
+  const user = new PublicKey(userPublicKey);
+  const connection = new Connection(clusterApiUrl('devnet'));
+  let emptyTAs = await getEmptyTokenAccounts(user, connection, TOKEN_PROGRAM_ID);
+  
+  if (!Array.isArray(emptyTAs)) {
+    throw new Error("Failed to retrieve empty token accounts.");
+  }
 
-    const iconURL = new URL("/noAccounts.png", currentUrl.origin);
+  if (emptyTAs.length === 0) {
+    const fakeTx = new Transaction();
+    fakeTx.feePayer = user;
+    const bh = (await connection.getLatestBlockhash({commitment: 'finalized'})).blockhash;
+    fakeTx.recentBlockhash = bh;
 
-    if (!userPublicKey) {
-      throw new Error("Invalid request: User public key is missing.");
-    }
+    const serializedFakeTX = fakeTx.serialize({
+      requireAllSignatures: false,
+      verifySignatures: false
+    }).toString('base64');
 
-    const user = new PublicKey(userPublicKey);
-    const connection = new Connection(clusterApiUrl('devnet'));
+    const nextActionError: PostNextActionLink = {
+      type: "post",
+      href: `${baseUrl}/api/noaccounts`
+    };
 
-    let emptyTAs = await getEmptyTokenAccounts(user, connection, TOKEN_PROGRAM_ID);
+    const response: ActionPostResponse = {
+      transaction: serializedFakeTX,
+      message: "No token accounts to close.",
+      links: {
+        next: nextActionError,
+      },
+    };
 
-    if (!Array.isArray(emptyTAs)) {
-      throw new Error("Failed to retrieve empty token accounts.");
-    }
+    return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
+  }
 
-    if (emptyTAs.length === 0) {
-      const fakeTx = new Transaction();
-      fakeTx.feePayer = user;
+  if (emptyTAs.length > 0) {
+    const fakeTx = new Transaction();
+    fakeTx.feePayer = user;
+    const bh = (await connection.getLatestBlockhash({commitment: 'finalized'})).blockhash;
+    fakeTx.recentBlockhash = bh;
+
+    const serializedFakeTX = fakeTx.serialize({
+      requireAllSignatures: false,
+      verifySignatures: false
+    }).toString('base64');
+
+    if (firstCall > 0) {
+      const tx = new Transaction();
+      const ixs = emptyTAs.map(pks => createCloseAccountInstruction(pks, user, user, undefined, TOKEN_PROGRAM_ID));
+      tx.add(...ixs);
+
+      tx.feePayer = user;
       const bh = (await connection.getLatestBlockhash({commitment: 'finalized'})).blockhash;
-      fakeTx.recentBlockhash = bh;
+      tx.recentBlockhash = bh;
 
-      const serializedFakeTX = fakeTx.serialize({
+      const serializedTX = tx.serialize({
         requireAllSignatures: false,
         verifySignatures: false
       }).toString('base64');
 
-      const nextActionError: PostNextActionLink = {
-        type: "post",
-        href: `${baseUrl}/api/noaccounts`
-      };
-
-
       const response: ActionPostResponse = {
-        transaction: serializedFakeTX,
-        message: "No token accounts to close.",
-        links: {
-          next: nextActionError,
-        },
+        transaction: serializedTX,
+        message: "Closing " + emptyTAs.length + " token accounts!",
       };
-
       return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
     }
 
-    if (emptyTAs.length > 0) {
-      const fakeTx = new Transaction();
-      fakeTx.feePayer = user;
-      const bh = (await connection.getLatestBlockhash({commitment: 'finalized'})).blockhash;
-      fakeTx.recentBlockhash = bh;
+    const lamportsPerAccount = 2039280;
+    const totalLamports = lamportsPerAccount * emptyTAs.length;
+    const totalSOL = totalLamports / 1e9;
 
-      const serializedFakeTX = fakeTx.serialize({
-        requireAllSignatures: false,
-        verifySignatures: false
-      }).toString('base64');
-
-
-      if(firstCall > 0) {
-        const tx = new Transaction();
-        const ixs = emptyTAs.map(pks => createCloseAccountInstruction(pks, user, user, undefined, TOKEN_PROGRAM_ID));
-        tx.add(...ixs);
-
-        tx.feePayer = user;
-        const bh = (await connection.getLatestBlockhash({commitment: 'finalized'})).blockhash;
-        tx.recentBlockhash = bh;
-
-        const serializedTX = tx.serialize({
-          requireAllSignatures: false,
-          verifySignatures: false
-        }).toString('base64');
-
-        const response: ActionPostResponse = {
-          transaction: serializedTX,
-          message: "Closing " + emptyTAs.length + " token accounts!",
-        };
-        return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
+    const dynamicIconURL = `${baseUrl}/api/icon?count=${emptyTAs.length}&solClaim=${totalSOL}`;
+    const nextInlineActionError: InlineNextActionLink = {
+      type: "inline",
+      action: {
+        icon: dynamicIconURL,
+        description: `You have ${emptyTAs.length} accounts to close, receiving approximately ${totalSOL.toFixed(6)} SOL.`,
+        label: `Close Accounts`,
+        title: `You have ${emptyTAs.length} accounts to close, receiving approximately ${totalSOL.toFixed(6)} SOL.`,
+        type: "action"
       }
+    };
 
-      const nextInlineActionError: InlineNextActionLink  = {
-        type: "inline",
-        action: {
-          icon: iconURL.toString(),
-          description:  `You have ${emptyTAs.length} to close`,
-          label:  `You have ${emptyTAs.length} to close`,
-          title: `You have ${emptyTAs.length} to close`,
-          type: "action"
-        }
-      };
+    const response: ActionPostResponse = {
+      transaction: serializedFakeTX,
+      message: "Accounts found to close.",
+      links: {
+        next: nextInlineActionError,
+      },
+    };
+    firstCall++;
 
-      const response: ActionPostResponse = {
-        transaction: serializedFakeTX,
-        message: "Accounts found to close.",
-        links: {
-          next: nextInlineActionError,
-        },
-      };
-      firstCall++;
-      return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
-    }
-
-    console.log(firstCall);
-  } catch (error) {
-    console.error("Error in POST handler:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
   }
 }
 
