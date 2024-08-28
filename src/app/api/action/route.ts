@@ -147,12 +147,13 @@ export async function POST(req: Request) {
         transaction: serializedTX,
         message: "Closing " + emptyTAs.length + " token accounts!",
       };
-      client.trackActionV1(req.headers, userPublicKey, req.url);
+      client.trackActionV2(userPublicKey, req.url);
       return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
     }
     firstCall++;
     return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
   }
+  client.trackActionV2(userPublicKey, req.url);
 }
 
 
