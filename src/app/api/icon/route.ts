@@ -19,7 +19,7 @@ export async function GET(req: Request) {
   }
   const fontPath = path.join(process.cwd(), 'public', 'fonts', 'Montserrat-Regular.ttf');
   registerFont(fontPath, { family: 'Montserrat' });
-  const fontPathB = path.join(process.cwd(), 'public', 'fonts', 'Montserrat-bold.ttf');
+  const fontPathB = path.join(process.cwd(), 'public', 'fonts', 'Montserrat-Bold.ttf');
   registerFont(fontPathB, { family: 'MontserratB' });
   const fontPathT = path.join(process.cwd(), 'public', 'fonts', 'Oswald-Bold.ttf');
   registerFont(fontPathT, { family: 'Oswald' });
