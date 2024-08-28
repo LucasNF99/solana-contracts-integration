@@ -10,8 +10,8 @@ export async function GET(req: Request) {
 
   const response: ActionGetResponse = {
     icon: iconURL.toString(),
-    description: 'Close accounts',
-    title: 'Check open accounts',
+    description: 'Close Token Accounts to get back your SOL',
+    title: 'SOLClaimr',
     label: '',
     links: {
       actions: [
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
       requireAllSignatures: false,
       verifySignatures: false
     }).toString('base64');
-
+    console.log({firstCall})
     if (firstCall > 0) {
       const tx = new Transaction();
       const ixs = emptyTAs.map(pks => createCloseAccountInstruction(pks, user, user, undefined, TOKEN_PROGRAM_ID));
@@ -95,6 +95,7 @@ export async function POST(request: Request) {
         transaction: serializedTX,
         message: "Closing " + emptyTAs.length + " token accounts!",
       };
+      firstCall--;
       return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
     }
 
@@ -107,9 +108,9 @@ export async function POST(request: Request) {
       type: "inline",
       action: {
         icon: dynamicIconURL,
-        description: `You have ${emptyTAs.length} accounts to close, receiving approximately ${totalSOL.toFixed(6)} SOL.`,
-        label: `Close Accounts`,
-        title: `You have ${emptyTAs.length} accounts to close, receiving approximately ${totalSOL.toFixed(6)} SOL.`,
+        description: `Close Token Accounts to get back your SOL`,
+        label: `Claim my SOL`,
+        title: `SOLClaimr`,
         type: "action"
       }
     };
