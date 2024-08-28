@@ -2,8 +2,11 @@ import { ActionGetResponse, ActionPostRequest, ActionPostResponse, ACTIONS_CORS_
 import { PublicKey, Connection, clusterApiUrl, Transaction, SystemProgram } from "@solana/web3.js";
 import { getEmptyTokenAccounts } from "./helpers";
 import { createCloseAccountInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
-
+import { BlinksightsClient } from 'blinksights-sdk';
+const BLINKSIGHTS_API = `${process.env.NEXT_PUBLIC_BLINKSIGHTS}`;
 var firstCall = 0;
+const client = new BlinksightsClient(BLINKSIGHTS_API);
+
 export async function GET(req: Request) {
   const requestUrl = new URL(req.url);
   const iconURL = new URL("/claimer.png", requestUrl.origin);
@@ -34,14 +37,14 @@ export async function GET(req: Request) {
       ]
     },
   }
-  
+  client.trackRenderV1(req.url, response);
   return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
 }
 
-export async function POST(request: Request) {
-  const currentUrl = new URL(request.url);
+export async function POST(req: Request) {
+  const currentUrl = new URL(req.url);
   const baseUrl = `${currentUrl.origin}`;
-  const requestBody: ActionPostRequest = await request.json();
+  const requestBody: ActionPostRequest = await req.json();
   const userPublicKey = requestBody.account;
   const user = new PublicKey(userPublicKey);
   const connection = new Connection(clusterApiUrl('devnet'));
@@ -144,6 +147,7 @@ export async function POST(request: Request) {
         transaction: serializedTX,
         message: "Closing " + emptyTAs.length + " token accounts!",
       };
+      client.trackActionV1(req.headers, userPublicKey, req.url);
       return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
     }
     firstCall++;
