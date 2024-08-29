@@ -11,7 +11,7 @@ export async function GET(req: Request) {
   const requestUrl = new URL(req.url);
   const iconURL = new URL("/claimer.png", requestUrl.origin);
 
-  const response: ActionGetResponse = {
+  const response: ActionGetResponse = client.createActionGetResponseV1(req.url, {
     icon: iconURL.toString(),
     description: 'Close Token Accounts to get back your SOL',
     title: 'SOLClaimr',
@@ -36,7 +36,7 @@ export async function GET(req: Request) {
         },
       ]
     },
-  }
+  });
   client.trackRenderV1(req.url, response);
   return Response.json(response, { headers: ACTIONS_CORS_HEADERS });
 }
